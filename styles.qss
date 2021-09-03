@@ -1,14 +1,21 @@
-QLineEdit {
+QLabel {
     alignment: center;
     border-radius: 12;
     padding: 8;
     font-size: 18pt;
 }
 
+QLineEdit {
+    text-align: center;
+    border-radius: 12;
+    padding: 8;
+    font-size: 14pt;
+}
+
 QPushButton {
     color: #202020;
     background-color: #25d366; 
-    font-size: 18pt;
+    font-size: 14pt;
     font-weight: normal;
     border-radius: 10;
     padding: 8;
