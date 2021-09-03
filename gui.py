@@ -1,11 +1,11 @@
 import sys
-from PyQt5.QtCore import Qt, QTimer, pyqtSignal
+from PyQt5.QtCore import Qt, QProcess, QTimer, pyqtSignal
 from PyQt5.QtWidgets import *
 # from PyQt5.QtGui import QPixmap, QCursor
 # from PyQt5 import QtGui, QtCore
 
 
-class WhatsAppCaller(QDialog):
+class WhatsAppCaller(QWidget):
     def __init__(self, parent = None):
         super(WhatsAppCaller, self).__init__(parent)
         self.setMinimumSize(320,140)
@@ -25,13 +25,14 @@ class WhatsAppCaller(QDialog):
         pushButton.clicked.connect(self.buttonClicked)
         # Place widgets in window
         layout = QGridLayout()
-        layout.addWidget(self.contactTB)
-        layout.addWidget(pushButton)
+        layout.addWidget(self.contactTB,0,0)
+        layout.addWidget(pushButton,1,0)
         self.setLayout(layout)
 
     def buttonClicked(self):
-        print("Button was pushed")
-
+        self.p = QProcess() # Keep a reference to the QProcess (e.g. on self) while it's running.
+        self.p.start(f"python3 whatsapp_android_caller.py {self.contactTB.text()}")
+            
 if __name__ == '__main__':
 
     import sys
