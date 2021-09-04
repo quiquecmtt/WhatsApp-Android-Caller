@@ -1,4 +1,4 @@
-import sys
+import sys, atexit, time
 from PyQt5.QtCore import Qt, QProcess, QTimer, pyqtSignal
 from PyQt5.QtWidgets import *
 # from PyQt5.QtGui import QPixmap, QCursor
@@ -21,18 +21,31 @@ class WhatsAppCaller(QWidget):
         self.contactTB.setPlaceholderText("Insert contact info (name or phone)")
         self.contactTB.setAlignment(Qt.AlignCenter)
         # Call button
-        pushButton = QPushButton("Call contact")
-        pushButton.clicked.connect(self.buttonClicked)
+        self.pushButton = QPushButton("Call contact")
+        self.pushButton.clicked.connect(self.buttonClicked)
         # Place widgets in window
         layout = QGridLayout()
         layout.addWidget(self.contactTB,0,0)
-        layout.addWidget(pushButton,1,0)
+        layout.addWidget(self.pushButton,1,0)
         self.setLayout(layout)
 
     def buttonClicked(self):
-        self.p = QProcess() # Keep a reference to the QProcess (e.g. on self) while it's running.
-        self.p.start(f"python3 whatsapp_android_caller.py {self.contactTB.text()}")
-            
+        self.pCall = QProcess() # Keep a reference to the QProcess (e.g. on self) while it's running.
+        self.pCall.finished.connect(self.callFinished)
+        self.pCall.daemon = True
+        self.pCall.start("python3",["whatsapp_android_caller.py", self.contactTB.text()])
+        self.pushButton.setEnabled(False)
+
+    def callFinished(self):
+        self.pushButton.setEnabled(True)
+        self.pCall = None
+    
+    def closeEvent(self, event):
+        if self.pCall != None:
+            self.pCall.terminate()
+        event.accept()
+
+
 if __name__ == '__main__':
 
     import sys

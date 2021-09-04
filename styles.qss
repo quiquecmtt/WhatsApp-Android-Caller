@@ -26,6 +26,12 @@ QPushButton:hover:!pressed {
     font-weight: normal;
     border-radius: 12;
 }
+QPushButton:disabled {
+    color: #f0f0f0;
+    background-color: #606060; 
+    font-weight: normal;
+    border-radius: 12;
+}
 
 
 QLabel#WhatsAppLogo {

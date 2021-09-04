@@ -74,7 +74,7 @@ def call_whatsapp(device, contact_name):
                 call_ended = True
                 time.sleep(1)
             if call_ended == True:
-                # tap_call_icon(device)
+                tap_call_icon(device)
                 # if device.serial == "CB512EPK24":
                 #     time.sleep(0.5)
                 #     device.input_tap(display_size[0] - 100, display_size[1] / 2 + 50)
