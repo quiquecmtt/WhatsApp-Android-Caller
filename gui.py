@@ -21,16 +21,20 @@ class WhatsAppCaller(QWidget):
         self.contactTB = QLineEdit(self)
         self.contactTB.setPlaceholderText("Insert contact info (name or phone)")
         self.contactTB.setAlignment(Qt.AlignCenter)
+        self.contactTB.returnPressed.connect(self.startCall)
         # Call button
         self.pushButton = QPushButton("Call contact")
-        self.pushButton.clicked.connect(self.buttonClicked)
+        self.pushButton.clicked.connect(self.startCall)
         # Place widgets in window
         layout = QGridLayout()
         layout.addWidget(self.contactTB,0,0)
         layout.addWidget(self.pushButton,1,0)
         self.setLayout(layout)
 
-    def buttonClicked(self):
+    def startCall(self):
+        if self.contactTB.text() == "":
+            print("No contact information entered.")
+            return
         self.pCall = QProcess() # Keep a reference to the QProcess (e.g. on self) while it's running.
         self.pCall.finished.connect(self.callFinished)
         self.pCall.daemon = True
