@@ -8,13 +8,13 @@ import numpy as np
 
 def tap_call_icon(device):
     method = cv2.TM_SQDIFF_NORMED
-    icon_gray = cv2.cvtColor(cv2.imread("videocall_icon.png"), cv2.COLOR_BGR2GRAY)
+    icon_gray = cv2.cvtColor(cv2.imread(os.path.dirname(__file__) + "/videocall_icon.png"), cv2.COLOR_BGR2GRAY)
     top_pad, down_pad, left_pad, right_pad = 75, 200, 0, -1
     while True: # Will run until icon is tapped
         screenshot = device.screencap()
-        with open("screen.png", "wb") as fp:
+        with open(os.path.dirname(__file__) + "/screen.png", "wb") as fp:
             fp.write(screenshot)
-        img_gray = cv2.cvtColor(cv2.imread("screen.png")[top_pad:down_pad,left_pad:right_pad], cv2.COLOR_BGR2GRAY)
+        img_gray = cv2.cvtColor(cv2.imread(os.path.dirname(__file__) + "/screen.png")[top_pad:down_pad,left_pad:right_pad], cv2.COLOR_BGR2GRAY)
                 
         result = cv2.matchTemplate(icon_gray, img_gray, method)
         # We want the minimum squared difference
@@ -88,7 +88,7 @@ if __name__ == "__main__":
     devices = client.devices() # Get list of currently connected devices
     processes = []
     method = cv2.TM_SQDIFF_NORMED
-    icon_gray = cv2.cvtColor(cv2.imread("videocall_icon.png"), cv2.COLOR_BGR2GRAY)
+    icon_gray = cv2.cvtColor(cv2.imread("src/videocall_icon.png"), cv2.COLOR_BGR2GRAY)
     contact_name = sys.argv[1]
     for device in devices:
         processes.append(Process(target = call_whatsapp, args = [device, contact_name]))

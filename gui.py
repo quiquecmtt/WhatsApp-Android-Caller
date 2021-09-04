@@ -11,7 +11,7 @@ class WhatsAppCaller(QWidget):
         self.pCall = None
         self.setMinimumSize(320,140)
         self.originalPalette = QApplication.palette()
-        qss = "styles.qss"
+        qss = "src/styles.qss"
         with open(qss,"r") as fh:
             self.setStyleSheet(fh.read())
         self.createMainWindow()
@@ -34,7 +34,7 @@ class WhatsAppCaller(QWidget):
         self.pCall = QProcess() # Keep a reference to the QProcess (e.g. on self) while it's running.
         self.pCall.finished.connect(self.callFinished)
         self.pCall.daemon = True
-        self.pCall.start("python3",["whatsapp_android_caller.py", self.contactTB.text()])
+        self.pCall.start("python3",["src/whatsapp_android_caller.py", self.contactTB.text()])
         self.pushButton.setEnabled(False)
 
     def callFinished(self):
