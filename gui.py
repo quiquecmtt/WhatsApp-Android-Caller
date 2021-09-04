@@ -1,4 +1,4 @@
-import sys, atexit, time
+import sys, time, psutil
 from PyQt5.QtCore import Qt, QProcess, QTimer, pyqtSignal
 from PyQt5.QtWidgets import *
 # from PyQt5.QtGui import QPixmap, QCursor
@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import *
 class WhatsAppCaller(QWidget):
     def __init__(self, parent = None):
         super(WhatsAppCaller, self).__init__(parent)
+        self.pCall = None
         self.setMinimumSize(320,140)
         self.originalPalette = QApplication.palette()
         qss = "styles.qss"
@@ -41,8 +42,16 @@ class WhatsAppCaller(QWidget):
         self.pCall = None
     
     def closeEvent(self, event):
-        if self.pCall != None:
-            self.pCall.terminate()
+        # Get process tree
+        current_process = psutil.Process()
+        children = current_process.children(recursive=True)
+        children.reverse()
+        print("Terminating child processes")
+        for child in children:
+            if psutil.pid_exists(child.pid):
+                print('Terminating child pid {}'.format(child.pid))
+                child.terminate()
+        print("Child processes terminated")
         event.accept()
 
 
