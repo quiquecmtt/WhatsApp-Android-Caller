@@ -1,9 +1,8 @@
 import sys, time, psutil
 from PyQt5.QtCore import Qt, QProcess, QTimer, pyqtSignal
 from PyQt5.QtWidgets import *
-# from PyQt5.QtGui import QPixmap, QCursor
+from PyQt5.QtGui import QIcon
 # from PyQt5 import QtGui, QtCore
-
 
 class WhatsAppCaller(QWidget):
     def __init__(self, parent = None):
@@ -22,40 +21,68 @@ class WhatsAppCaller(QWidget):
         self.contactTB.setPlaceholderText("Insert contact info (name or phone)")
         self.contactTB.setAlignment(Qt.AlignCenter)
         self.contactTB.returnPressed.connect(self.startCall)
-        # Call button
-        self.pushButton = QPushButton("Call contact")
-        self.pushButton.clicked.connect(self.startCall)
+        self.contactTB.setAttribute(Qt.WA_MacShowFocusRect, 0)
+        # Call and stop buttons
+        self.pbt = {"call":"Call contact","stop":"Stop call"}
+        self.startButton = QPushButton(self.pbt["call"])
+        self.startButton.clicked.connect(self.startCall)
+        self.stopButton = QPushButton(self.pbt["stop"])
+        self.stopButton.clicked.connect(self.stopCall)
         # Place widgets in window
-        layout = QGridLayout()
-        layout.addWidget(self.contactTB,0,0)
-        layout.addWidget(self.pushButton,1,0)
-        self.setLayout(layout)
-
+        self.layout = QGridLayout()
+        self.layout.addWidget(self.contactTB,0,0)
+        self.layout.addWidget(self.startButton,1,0)
+        self.layout.addWidget(self.stopButton,1,0)
+        self.stopButton.hide()
+        self.setLayout(self.layout)
+    
     def startCall(self):
+        if self.pCall != None: 
+            print("Another call is in progress.")
+            return    
         if self.contactTB.text() == "":
+            # self.displayError("No contact information entered.")
             print("No contact information entered.")
             return
+        print("Starting call")
         self.pCall = QProcess() # Keep a reference to the QProcess (e.g. on self) while it's running.
-        self.pCall.finished.connect(self.callFinished)
-        self.pCall.daemon = True
+        self.pCall.finished.connect(self.stopCall)
         self.pCall.start("python3",["src/whatsapp_android_caller.py", self.contactTB.text()])
-        self.pushButton.setEnabled(False)
+        # self.layout.removeWidget(self.startButton)
+        self.startButton.hide()
+        # self.layout.addWidget(self.stopButton,1,0)
+        self.stopButton.show()
 
-    def callFinished(self):
-        self.pushButton.setEnabled(True)
-        self.pCall = None
-    
-    def closeEvent(self, event):
+    def stopCall(self):
+        if self.pCall == None: return
+        print("Stopping call")
+        self.terminateChildren()
+        # self.layout.removeWidget(self.stopButton)
+        self.stopButton.hide()
+        # self.layout.addWidget(self.startButton,1,0)
+        self.startButton.show()
+
+    def terminateChildren(self):
         # Get process tree
         current_process = psutil.Process()
         children = current_process.children(recursive=True)
         children.reverse()
-        print("Terminating child processes")
-        for child in children:
+        gchildren = [child for child in children if child.pid != self.pCall.pid()]
+        # print("Terminating child processes")
+        for child in gchildren:
             if psutil.pid_exists(child.pid):
-                print('Terminating child pid {}'.format(child.pid))
+                # print('Terminating child pid {}'.format(child.pid))
                 child.terminate()
-        print("Child processes terminated")
+        # print("Child processes terminated")
+        self.pCall.terminate()
+        self.pCall = None
+
+    def displayError(self, text):
+        self.errorLabel = QLabel(text)
+        self.layout.addWidget(self.errorLabel)
+
+    def closeEvent(self, event):
+        self.terminateChildren()
         event.accept()
 
 
