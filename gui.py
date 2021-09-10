@@ -1,4 +1,4 @@
-import sys, time, psutil
+import sys, os, time, psutil
 from PyQt5.QtCore import Qt, QProcess, QTimer, pyqtSignal
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
@@ -47,7 +47,7 @@ class WhatsAppCaller(QWidget):
         print("Starting call")
         self.pCall = QProcess() # Keep a reference to the QProcess (e.g. on self) while it's running.
         self.pCall.finished.connect(self.stopCall)
-        self.pCall.start("python3",["src/whatsapp_android_caller.py", self.contactTB.text()])
+        self.pCall.start("python3",[os.path.dirname(__file__) + "/src/whatsapp_android_caller.py", self.contactTB.text()])
         # self.layout.removeWidget(self.startButton)
         self.startButton.hide()
         # self.layout.addWidget(self.stopButton,1,0)
@@ -87,9 +87,6 @@ class WhatsAppCaller(QWidget):
 
 
 if __name__ == '__main__':
-
-    import sys
-
     app = QApplication(sys.argv)
     caller = WhatsAppCaller()
     caller.show()
