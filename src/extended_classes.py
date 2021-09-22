@@ -1,7 +1,7 @@
 class DeviceExtended(Device):
     """An extension of the Device class from PPADB"""
     def __init__(self, client, serial):
-        super(),__init__(client, serial)
+        super().__init__(client, serial)
         screenState = self.shell("dumpsys power | grep mWakefulness=").split("=")[1]
         lockState = self.shell("dumpsys window | grep mDreamingLockscreen=").split(" ")[1].split("=")[1]
         self.screenOn = True if screenState == "Awake" else False
