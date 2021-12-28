@@ -62,10 +62,7 @@ def call_whatsapp(device, contact_name):
     device.input_keyevent("KEYCODE_D") # Write any letter so that I can use de clear button
     device.input_keyevent("KEYCODE_TAB") # Move to clear button
     device.input_keyevent("KEYCODE_ENTER") # Press clear button
-
     device.input_text(contact_name)
-    # device.input_text("Consolato Generale Italia Buenos Aires")
-    # device.input_text("Martin Cametti")
     device.input_tap(500,250)
     call_ended = True
     while True:
